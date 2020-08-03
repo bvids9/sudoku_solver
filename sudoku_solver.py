@@ -159,13 +159,21 @@ class SudokuBoard():
     def get_puzzle_board(self):
         return self.puzzle_board
 
-    def gen_puzzle_board(self):
+    def gen_puzzle_board(self, level="easy"):
         # Generate a puzzle board in one function
         # Stores the solution for the generated puzzle board in the class
+        # Difficulty determines the number of cells to remove in the remove_nums function
+
+        difficulty = {"easy": 25,
+                      "medium": 45,
+                      "hard": 60}
+                      
+        chosen = difficulty[level]
+                
         board = self.gen_board()
         self.solve_board(board)
         solution = self.get_solved_board()
-        puzzle_board = self.remove_nums(board) # Turn board into a puzzle
+        puzzle_board = self.remove_nums(board, r_num=chosen) # Turn board into a puzzle
         
         return puzzle_board, solution
 
@@ -178,7 +186,7 @@ class SudokuBoard():
 
 sudoku = SudokuBoard()
 
-puzzle, solution = sudoku.gen_puzzle_board()
+puzzle, solution = sudoku.gen_puzzle_board(level="hard")
 
 print("\nOriginal Puzzle: \n")
 sudoku.disp_board(solution)

@@ -5,6 +5,7 @@ from sudoku_solver import SudokuBoard
 MARGIN = 20
 SIDE = 50
 WIDTH = HEIGHT = MARGIN * 2 + SIDE * 9
+delay = 0.1
 
 class SudokuUI(Frame):
     def __init__(self, parent):
@@ -23,6 +24,7 @@ class SudokuUI(Frame):
 
     def __generate_interface(self):
         # Generate Tkinter window
+        # Generate interface elements, including buttons
 
         self.parent.title("Sudoku Solver")
         self.pack(fill=BOTH)
@@ -31,8 +33,16 @@ class SudokuUI(Frame):
                             height=HEIGHT)
         self.canvas.pack(fill=BOTH, side=TOP)
 
+        draw_button = Button(self, 
+                            text="Load New Puzzle", 
+                            command=self.draw_command)
+
+        draw_button.pack(fill=BOTH, side=BOTTOM)
+
+        # TODO: Add Clear Answers Button
+        # TODO: Add Solve Button
+
         self.__draw_grid()
-        self.__draw_numbers(original=True, answers=True)
 
 
     def __draw_grid(self):
@@ -56,13 +66,13 @@ class SudokuUI(Frame):
             y0 = MARGIN + i * SIDE
 
             self.canvas.create_line(x0, y0, x1, y1, fill=colour)
-        pass
+
 
     def __draw_numbers(self, original=False, answers=False, visual_solve=False):
         # Load numbers into the board
         self.canvas.delete("numbers")
 
-        puzzle_board, solution = self.sudoku.gen_puzzle_board()
+        puzzle_board, solution = self.sudoku.gen_puzzle_board(level="medium")
 
         if original:    # Load in original numbers
             for i in range(9):
@@ -74,6 +84,8 @@ class SudokuUI(Frame):
                         self.canvas.create_text(
                             x,y, text=answer, tags="numbers", fill="black"
                         )
+                        self.update()   #Tkinter.update function to refresh screen
+                        time.sleep(delay)
         if answers:
             for i in range(9):
                 for j in range(9):
@@ -84,12 +96,24 @@ class SudokuUI(Frame):
                         self.canvas.create_text(
                             x,y, text=answer, tags="solution", fill="sea green"
                         )
+                        self.update()
+                        time.sleep(delay)
+
         
         # Code to generate the iteration and solving.
-        if visual_solve:
-            pass
-        pass
+        # Will need to generate another internal function
+    
+    def draw_command(self):
+        # Call the draw_numbers function for the button
+        self.__draw_numbers(original=True)
+    
+    def draw_answers_command(self):
+        # Call the draw_numbers function for answer button
+        self.__draw_numbers(original=False, answers=True)
 
+    def visual_solver(self, board):
+        # Function for the visual solving
+        pass
     def __clear_all(self):
         pass
 
