@@ -58,14 +58,13 @@ class SudokuUI(Frame):
             self.canvas.create_line(x0, y0, x1, y1, fill=colour)
         pass
 
-    def __draw_numbers(self, original=False, answers=False):
+    def __draw_numbers(self, original=False, answers=False, visual_solve=False):
         # Load numbers into the board
-        # TODO: Load solution
         self.canvas.delete("numbers")
 
         puzzle_board, solution = self.sudoku.gen_puzzle_board()
 
-        if original:
+        if original:    # Load in original numbers
             for i in range(9):
                 for j in range(9):
                     answer = puzzle_board[i][j]
@@ -83,8 +82,12 @@ class SudokuUI(Frame):
                         x = MARGIN + j * SIDE + SIDE/2
                         y = MARGIN + i * SIDE + SIDE/2
                         self.canvas.create_text(
-                            x,y, text=answer, tags="numbers", fill="sea green"
+                            x,y, text=answer, tags="solution", fill="sea green"
                         )
+        
+        # Code to generate the iteration and solving.
+        if visual_solve:
+            pass
         pass
 
     def __clear_all(self):
