@@ -60,20 +60,21 @@ class SudokuUI(Frame):
 
     def __draw_numbers(self, original=False, answers=False):
         # Load numbers into the board
+        # TODO: Load solution
         self.canvas.delete("numbers")
 
-        puzzle_board = self.sudoku.gen_puzzle_board()
+        puzzle_board, solution = self.sudoku.gen_puzzle_board()
 
-
-        for i in range(9):
-            for j in range(9):
-                answer = puzzle_board[i][j]
-                if answer != 0:
-                    x = MARGIN + j * SIDE + SIDE/2
-                    y = MARGIN + i * SIDE + SIDE/2
-                    self.canvas.create_text(
-                        x,y, text=answer, tags="numbers", fill="black"
-                    )
+        if original:
+            for i in range(9):
+                for j in range(9):
+                    answer = puzzle_board[i][j]
+                    if answer != 0:
+                        x = MARGIN + j * SIDE + SIDE/2
+                        y = MARGIN + i * SIDE + SIDE/2
+                        self.canvas.create_text(
+                            x,y, text=answer, tags="numbers", fill="black"
+                        )
         pass
 
     def __clear_all(self):
