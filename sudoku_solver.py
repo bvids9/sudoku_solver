@@ -1,5 +1,6 @@
-# Generate a Sudoku Board and Solve it
+# Class generates Sudoku boards, stores them and solves them.
 import random
+import copy
 
 class SudokuBoard():
 
@@ -65,7 +66,9 @@ class SudokuBoard():
                 
     def gen_board(self):
         # Generate a 9 x 9 board
-        # Generate individual lines via randomising the seed, three numbers at a time.
+        # Generates a randomised first line to be the seed_row
+        # Then the remainder is zeroed
+        # Boards are solved from this
         seed_row_initial = [1, 2, 3, 4, 5, 6, 7, 8, 9]
         board = [[0 for i in range(9)] for j in range(9)]
         random.shuffle(seed_row_initial)
@@ -125,12 +128,11 @@ class SudokuBoard():
 
                 board[row][col] = 0 # If not, then reset the previous number
 
-        
-
     def remove_nums(self, board, r_num=25):
         # Remove up to x numbers in board using the board and selected number to remove.
         # Generates a puzzle board
-
+        # Deep Copying is necessary to sotre the solution and puzzle seperately.
+        removed_board = copy.deepcopy(board)
         remove_row = []
         remove_col = []
         counter = 0
@@ -146,16 +148,26 @@ class SudokuBoard():
             x = remove_row[i]
             y = remove_col[i]
 
-            board[x][y] = 0
+            removed_board[x][y] = 0
+    
+        return removed_board
 
-        self.puzzle_board = board
-        return board  
 
     def get_solved_board(self):
         return self.solved_board
     
     def get_puzzle_board(self):
         return self.puzzle_board
+
+    def gen_puzzle_board(self):
+        # Generate a puzzle board in one function
+        # Stores the solution for the generated puzzle board in the class
+        board = self.gen_board()
+        self.solve_board(board)
+        solution = self.get_solved_board()
+        puzzle_board = self.remove_nums(board) # Turn board into a puzzle
+        
+        return puzzle_board, solution
 
     def disp_board(self, board):
         for i in range(len(board)): print(board[i])
@@ -164,27 +176,12 @@ class SudokuBoard():
         return self.solver_message
     
 
-
-
-
-
-# # Left over tests
-# root = Tk()
-# SudokuBoard(root)
-# root.geometry(f"{width}x{height+100}")
-# root.mainloop()
-
 sudoku = SudokuBoard()
 
-empty_board = sudoku.gen_board()
-
-sudoku.solve_board(empty_board)
-solution = sudoku.get_solved_board()
+puzzle, solution = sudoku.gen_puzzle_board()
 
 print("\nOriginal Puzzle: \n")
 sudoku.disp_board(solution)
-
-puzzle = sudoku.remove_nums(solution)
 
 print("\nPuzzle to be solved:\n")
 sudoku.disp_board(puzzle)
