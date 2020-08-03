@@ -68,11 +68,12 @@ class SudokuUI(Frame):
             self.canvas.create_line(x0, y0, x1, y1, fill=colour)
 
 
-    def __draw_numbers(self, original=False, answers=False, visual_solve=False):
+    def __draw_numbers(self, difficulty, original=False, answers=False, visual_solve=False):
         # Load numbers into the board
         self.canvas.delete("numbers")
-
-        puzzle_board, solution = self.sudoku.gen_puzzle_board(level="medium")
+        # TODO: Change difficulty levels
+        # Consider refactoring the board_generation into a seperate function.
+        puzzle_board, solution = self.sudoku.gen_puzzle_board(level=difficulty)
 
         if original:    # Load in original numbers
             for i in range(9):
@@ -105,15 +106,16 @@ class SudokuUI(Frame):
     
     def draw_command(self):
         # Call the draw_numbers function for the button
-        self.__draw_numbers(original=True)
+        self.__draw_numbers(difficulty="medium", original=True)
     
     def draw_answers_command(self):
         # Call the draw_numbers function for answer button
-        self.__draw_numbers(original=False, answers=True)
+        self.__draw_numbers(difficulty="medium", original=False, answers=True)
 
     def visual_solver(self, board):
         # Function for the visual solving
         pass
+
     def __clear_all(self):
         pass
 
