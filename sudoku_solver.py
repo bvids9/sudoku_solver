@@ -1,117 +1,14 @@
-# Generate a Sudoku Board
+# Generate a Sudoku Board and Solve it
 import random
-import time
-from tkinter import Tk, Canvas, Frame, Button, BOTH, TOP, BOTTOM
 
-margin = 20
-side = 50
-width = height = margin * 2 + side * 9
+class SudokuBoard():
 
-class SudokuBoard(Frame):
-
-    def __init__(self, parent):
+    def __init__(self):
         self.empty_board = []
         self.solved_board = []
         self.puzzle_board = [[0 for i in range(9)] for j in range(9)]
         self.solver_message = ""
         
-        # UI_stuff
-        Frame.__init__(self, parent)
-        self.parent = parent
-
-        self.disp_row, self.disp_col = -1, -1
-        
-        self.__generate_interface()
-
-    def __generate_interface(self):
-        # Generate the tkinter interface
-        self.parent.title("Sudoku - Solver")
-        self.pack(fill=BOTH)
-        self.canvas = Canvas(self, 
-                            width=width,
-                            height=height)
-        
-        self.canvas.pack(fill=BOTH, side=TOP)
-
-        # Load Puzzle button
-        load_button = Button(self,
-                            text="Load Puzzle",
-                            command=self.__load_board)
-        load_button.pack(fill=BOTH,side=TOP)
-
-        # TODO: Solve button
-        solve_button = Button(self,
-                             text="Solve Puzzle",
-                             command=self.solve_board(self.puzzle_board)
-        )
-
-        solve_button.pack(fill=BOTH,side=TOP)
-        # TODO: Finish Clear Button
-        clear_button= Button(self,
-                            text="Clear Answers",
-                            command=self.clear_all)
-        clear_button.pack(fill=BOTH,side=BOTTOM)
-
-        self.clear_all()
-        self.__draw_grid()
-        
-
-
-    def __draw_grid(self):
-        # Draw grid 9x9 with blue lines to divide into 3 x 3 squares
-
-        for i in range(10):
-            colour = "blue" if i % 3 == 0 else "gray"
-
-            x0 = margin + i * side
-            y0 = margin
-            x1 = margin + i * side
-            y1 = height - margin
-
-            self.canvas.create_line(x0, y0, x1, y1, fill=colour)
-
-            x0 = margin
-            y0 = margin + i * side
-            x1 = width - margin
-            y1 = margin + i * side
-            self.canvas.create_line(x0, y0, x1, y1, fill=colour)
-
-    def __load_board(self):
-        # Load the board from the Sudoku class
-        self.empty_board = self.gen_board()
-        self.solved_board = self.solve_board(self.empty_board)
-        
-        self.puzzle_board = self.remove_nums(self.solved_board)
-
-
-        # Draw the puzzle on the board
-        self.canvas.delete("numbers")
-        # Cycle through the loaded board
-        for i in range(9):
-            for j in range(9):
-                answer = self.puzzle_board[i][j]
-                if answer != 0:
-                    x = margin + j* side + side / 2
-                    y = margin + i * side + side / 2
-                    self.canvas.create_text(
-                        x, y, text=answer, tags="numbers", fill="black"
-                    )
-
-
-    def clear_all(self):
-        # Clear all information and board display
-        self.empty_board = []
-        self.solved_board = []
-        self.puzzle_board = []
-        self.solver_message = ""
-        self.canvas.delete("numbers")
-        self.canvas.delete("solution")
-        pass
-    
-    def user_inputs(self):
-        # Handle keypresses and mouse clicks.
-        pass
-
     def fixed_indexes(self):
         # generate three unique numbers to use as shuffling indexes
         fixed_indexes = []
@@ -175,81 +72,60 @@ class SudokuBoard(Frame):
         board[0] = seed_row_initial
         return board
         
-    def check_board(self, board):
-        # Check Board is Full.
+    def find_empty(self, board):
+        # Find empty cells
         for row in range(0, 9):
             for col in range(0, 9):
-                if board[row][col] == 0:
-                    return False
-        return True
+                if board[row][col] == 0: return row, col
+
+        return None
     
-    def check_square(self, board, rmin, rmax, col):
-        # Check squares by row
-        square = []
-        if col<3:
-            square = [board[i][0:3] for i in range(rmin, rmax)]
-        elif col<6:
-            square = [board[i][3:6] for i in range(rmin, rmax)]
-        else:
-            square = [board[i][6:9] for i in range(rmin, rmax)]
-        return square
+    def check_valid(self, board, num, pos):
+        # Check if the inputted number is allowed, against rows, columns and squares
+        # Check rows
+        for i in range(0, 9):
+            if board[pos[0]][i] == num and pos[1] != i:
+                return False
+        
+        # Check columns
+        for i in range(0, 9):
+            if board[i][pos[1]] == num and pos[0] != i:
+                return False
+        
+        # Check squares
+        square_x = pos[1] // 3
+        square_y = pos[0] // 3
+
+        for i in range(square_y*3, square_y*3 + 3):
+            for j in range(square_x*3, square_x*3 + 3):
+                if board[i][j] == num and (i,j) != pos:
+                    return False
+        
+        return True
 
     def solve_board(self, board, visual=False):
         # Backtracking algorithm
         # Find empty cell in 9 x 9 grid
-        for ind in range(0, 81):
-            row = ind//9  # Approximate row by rounding down, ie 17 // 9 = 1, 18 // 2 = 2...
-            col = ind%9   # Approximate column by remainder, ie 17 % 9 = 8
 
-            if board[row][col]==0:  # If cell is empty (ie 0), cycle numbers to fill in it
-                for value in range(1,10):
-                    # Check if the number exists in the row
-                    if not(value in board[row]):
-                        # Check column
-                        if value not in (board[i][col] for i in range(0,8)):
-                            # Determine which of the 9 squares this area is in (eg Square 4 = rows 3-6, col 0-3)
-                            square = []
-                            if row<3: # Top 3 rows
-                                square = self.check_square(board, 0, 3, col)
+        empty_squares = self.find_empty(board)
+        if not empty_squares:
+            self.solved_board = board
+            return True # If there are no empty squares, it is solved
+        else:
+            row, col = empty_squares
+        
+        for i in range(1, 10):
+            if self.check_valid(board, i, (row, col)):
+                board[row][col] = i # Generate valid numbers and place in the empty squares
 
-                            elif row<6: # Middle...
-                                square = self.check_square(board, 3, 6, col)
+                if self.solve_board(board):
+                    self.solved_board = board
+                    return True # Check if the board has been solved after placing values
+                    
 
-                            else:
-                                square = self.check_square(board, 6, 9, col)
-                                    
-                            # Check if the value has been used in this 3x3 square
+                board[row][col] = 0 # If not, then reset the previous number
 
-                            if not value in (square[0] + square[1] + square[2]):
-                                board[row][col] = value
-
-                                if visual==True:
-                                    for i in range(9):
-                                        for j in range(9):
-                                            original_board = self.puzzle_board
-                                            answer = original_board[i][j]
-                                            x = margin + j* side + side / 2
-                                            y = margin + i * side + side / 2
-                                            self.canvas.create_text(
-                                                x, y, text=value, 
-                                                tags="solution", 
-                                                fill="sea green")
-                                            # time.sleep(0.001)                                    
-
-                                if self.check_board(board):
-                                    print("Board solved.")
-                                    self.solved_board = board # Record solved board
-                                    return board
-                                else:
-                                    if self.solve_board(board):
-                                        return board
-                                        self.solved_board = board  # Record solved board
-
-                # If after iterating through the entire board, no valid place to put value is found, exit loop and backtrack
-                break
-        print("Backtracking...")
-        board[row][col] = 0
-        self.board = board
+        
 
     def remove_nums(self, board, r_num=25):
         # Remove up to x numbers in board using the board and selected number to remove.
@@ -292,24 +168,25 @@ class SudokuBoard(Frame):
 
 
 
-# Left over tests
-root = Tk()
-SudokuBoard(root)
-root.geometry(f"{width}x{height+100}")
-root.mainloop()
+# # Left over tests
+# root = Tk()
+# SudokuBoard(root)
+# root.geometry(f"{width}x{height+100}")
+# root.mainloop()
 
-# sudoku = SudokuBoard()
+sudoku = SudokuBoard()
 
-# empty_board = sudoku.gen_board()
+empty_board = sudoku.gen_board()
 
-# solution = sudoku.solve_board(empty_board)
+sudoku.solve_board(empty_board)
+solution = sudoku.get_solved_board()
 
-# print("\nOriginal Puzzle: \n")
-# sudoku.disp_board(solution)
+print("\nOriginal Puzzle: \n")
+sudoku.disp_board(solution)
 
-# puzzle = sudoku.remove_nums(solution)
+puzzle = sudoku.remove_nums(solution)
 
-# print("\nPuzzle to be solved:\n")
-# sudoku.disp_board(puzzle)
-# 
+print("\nPuzzle to be solved:\n")
+sudoku.disp_board(puzzle)
+
 
