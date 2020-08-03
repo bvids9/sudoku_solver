@@ -32,7 +32,7 @@ class SudokuUI(Frame):
         self.canvas.pack(fill=BOTH, side=TOP)
 
         self.__draw_grid()
-        self.__draw_numbers()
+        self.__draw_numbers(original=True, answers=True)
 
 
     def __draw_grid(self):
@@ -74,6 +74,16 @@ class SudokuUI(Frame):
                         y = MARGIN + i * SIDE + SIDE/2
                         self.canvas.create_text(
                             x,y, text=answer, tags="numbers", fill="black"
+                        )
+        if answers:
+            for i in range(9):
+                for j in range(9):
+                    answer = solution[i][j]
+                    if puzzle_board[i][j] == 0:
+                        x = MARGIN + j * SIDE + SIDE/2
+                        y = MARGIN + i * SIDE + SIDE/2
+                        self.canvas.create_text(
+                            x,y, text=answer, tags="numbers", fill="sea green"
                         )
         pass
 

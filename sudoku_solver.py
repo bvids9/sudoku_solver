@@ -106,8 +106,8 @@ class SudokuBoard():
         
         return True
 
-    def solve_board(self, board, visual=False):
-        # Backtracking algorithm
+    def solve_board(self, board):
+        # Backtracking algorithm, solves the board
         # Find empty cell in 9 x 9 grid
 
         empty_squares = self.find_empty(board)
