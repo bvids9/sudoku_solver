@@ -19,6 +19,7 @@ class SudokuUI(Frame):
         self.disp_row, self.disp_col = -1, -1
 
         self.board_loaded = False
+        self.solving = False
 
         self.__generate_interface()
 
@@ -86,31 +87,33 @@ class SudokuUI(Frame):
         return (x,y)
 
     def __draw_numbers(self, difficulty, original=False, answers=False, visual_solve=False):
-        # Load numbers into the board
-        self.canvas.delete("numbers")
-        self.canvas.delete("solution")
-        # TODO: Change difficulty levels
+        if not self.solving:
+            # Load numbers into the board
+            self.canvas.delete("numbers")
+            self.canvas.delete("solution")
+            # TODO: Change difficulty levels
 
-        # Loads new board
-        self.puzzle_board, self.solution = self.__get_board()
+            # Loads new board
+            self.puzzle_board, self.solution = self.__get_board()
 
-            # Load in original numbers
-            # Consider refactoring the below...
-        for i in range(9):
-            for j in range(9):
-                answer = self.puzzle_board[i][j]
-                if answer != 0:
-                    x, y = self.__get_num_coords(i,j)
-                    self.canvas.create_text(
-                        x,y, text=answer, tags="numbers", fill="black"
-                    )
-                    self.update()   #Tkinter.update function to refresh screen
-                    time.sleep(delay)
+                # Load in original numbers
+                # Consider refactoring the below...
+            for i in range(9):
+                for j in range(9):
+                    answer = self.puzzle_board[i][j]
+                    if answer != 0:
+                        x, y = self.__get_num_coords(i,j)
+                        self.canvas.create_text(
+                            x,y, text=answer, tags="numbers", fill="black"
+                        )
+                        self.update()   #Tkinter.update function to refresh screen
+                        time.sleep(delay)
         self.board_loaded = True
 
-        # Consider seperating out for a solution drawing
+
     def __draw_solution(self):
         if self.board_loaded:
+            self.solving = True
             for i in range(9):
                 for j in range(9):
                     answer = self.solution[i][j]
@@ -122,9 +125,12 @@ class SudokuUI(Frame):
                         self.update()
                         time.sleep(delay)
 
-        
+        self.solving = False
+
+    def __draw_solver(self):
         # TODO: Code to generate the iteration and solving.
         #       Will need to generate another internal function to do the backtracking.
+        pass
     
     def draw_command(self):
         # Call the draw_numbers function for the button
@@ -133,10 +139,6 @@ class SudokuUI(Frame):
     def draw_answers_command(self):
         # Call the draw_numbers function for answer button
         self.__draw_solution()
-
-    def visual_solver(self, board):
-        # Function for the visual solving
-        pass
 
     def __clear_all(self):
         pass
