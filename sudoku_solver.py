@@ -165,7 +165,7 @@ class SudokuBoard():
 
         difficulty = {"easy": 25,
                       "medium": 45,
-                      "hard": 60}
+                      "hard": 64}   # Minimum number of digits in the grid is 17
                       
         chosen = difficulty[level]
                 
