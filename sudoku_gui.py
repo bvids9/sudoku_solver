@@ -101,13 +101,10 @@ class SudokuUI(Frame):
             self.canvas.delete("solution")
             self.delete_v_solve()
 
-            # TODO: Change difficulty levels
-
             # Loads new board
             self.puzzle_board, self.solution = self.__get_board(difficulty)
 
-                # Load in original numbers
-                # Consider refactoring the below...
+            # Print board to GUI
             for i in range(9):
                 for j in range(9):
                     answer = self.puzzle_board[i][j]
