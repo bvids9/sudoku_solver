@@ -1,4 +1,5 @@
-from tkinter import Tk, Canvas, Frame, Button, BOTH, TOP, BOTTOM
+from tkinter import Tk, Canvas, Frame, Button, BOTH, TOP, BOTTOM, Label
+import tkinter as tk
 import time
 from sudoku_solver import SudokuBoard
 
@@ -20,6 +21,7 @@ class SudokuUI(Frame):
 
         self.board_loaded = False
         self.solving = False
+        self.message_log = ""
 
         self.__generate_interface()
 
@@ -47,8 +49,8 @@ class SudokuUI(Frame):
                             command=self.draw_answers_command)
         solve_button.pack(fill=BOTH, side=BOTTOM)
 
-        # TODO: Add Clear Answers Button
-        # TODO: Add Solve Button
+        self.lbl_message_log = Label(self, fg="black", bg="gray82", bd=3)
+        self.lbl_message_log.pack(fill=BOTH, side=BOTTOM)
 
         self.__draw_grid()
         self.puzzle_board, self.solution = self.__get_board()
@@ -110,6 +112,8 @@ class SudokuUI(Frame):
                         )
                         self.update()   #Tkinter.update function to refresh screen
                         time.sleep(delay)
+                        self.lbl_message_log['text'] = "Loading..."
+        self.lbl_message_log['text'] = "Board Loaded!"
         self.board_loaded = True
 
 
@@ -158,6 +162,7 @@ class SudokuUI(Frame):
         if self.board_loaded == True:
             empty_squares = self.sudoku.find_empty(board)
             if not empty_squares:
+                self.lbl_message_log['text'] = "Solved!"
                 return True
             else:
                 row, col = empty_squares
@@ -169,6 +174,7 @@ class SudokuUI(Frame):
                     self.canvas.create_text(
                             x,y, text=i, tags=f"v_solve{row}{col}", fill="sea green" # Tag each generated solution
                     )
+                    self.lbl_message_log['text'] = "Solving..."
 
                     self.update()
                     time.sleep(0.1)
@@ -179,6 +185,7 @@ class SudokuUI(Frame):
                     board[row][col] = 0
                     self.canvas.delete(f"v_solve{row}{col}") # Delete if backtracking
                     x,y = self.__get_num_coords(row, col)
+                    self.lbl_message_log['text'] = "Backtracking..."
                     self.update()
                     time.sleep(0.25)
 
