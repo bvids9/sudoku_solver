@@ -1,4 +1,4 @@
-from tkinter import Tk, Canvas, Frame, Button, BOTH, TOP, BOTTOM, Label
+from tkinter import Tk, Canvas, Frame, Button, BOTH, TOP, BOTTOM, Label, font
 import tkinter as tk
 import time
 from sudoku_solver import SudokuBoard
@@ -177,8 +177,12 @@ class SudokuUI(Frame):
                 if self.sudoku.check_valid(board, i, (row, col)):
                     board[row][col] = i
                     x,y = self.__get_num_coords(row, col)
+
+                    # Create Tag each generated solution
+                    # Bold the solutions
+                    text_font = font.Font(size=11, weight="bold") 
                     self.canvas.create_text(
-                            x,y, text=i, tags=f"v_solve{row}{col}", fill="sea green" # Tag each generated solution
+                            x,y, text=i,font=text_font, tags=f"v_solve{row}{col}", fill="dark green", 
                     )
                     self.lbl_message_log['text'] = "Solving..."
 
