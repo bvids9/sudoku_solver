@@ -152,7 +152,6 @@ class SudokuBoard():
     
         return removed_board
 
-
     def get_solved_board(self):
         return self.solved_board
     

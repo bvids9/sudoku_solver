@@ -91,6 +91,8 @@ class SudokuUI(Frame):
             # Load numbers into the board
             self.canvas.delete("numbers")
             self.canvas.delete("solution")
+            self.delete_v_solve()
+
             # TODO: Change difficulty levels
 
             # Loads new board
@@ -126,11 +128,60 @@ class SudokuUI(Frame):
                         time.sleep(delay)
 
         self.solving = False
+    
+    def check_square(self, board, col, row_min, row_max):
+        if col <3:
+            square = [[board[row][0:3]] for row in range(row_min,row_max)]
+        if col<6:
+            square = [[board[row][3:6]] for row in range(row_min,row_max)]
+        else:
+            square = [[board[row][6:9]] for row in range(row_min, row_max)]
 
-    def __draw_solver(self):
+        return square
+    
+    def delete_v_solve(self):
+        for row in range(0, 9):
+            for col in range(0, 9):
+                self.canvas.delete(f"v_solve{row}{col}")
+
+    # Solver visualiser needs work.
+    def __draw_solver(self, board):
         # TODO: Code to generate the iteration and solving.
         #       Will need to generate another internal function to do the backtracking.
-        pass
+        # 1. Loop through board cells, find zeroes and attempt to assign values between 1-9
+        # 2. Check the row of the zero for other values that are equal to the assigning value
+        # 3. Check the column of the zero for other values that are equal to the assigning value
+        # 4. Check the 3x3 square of the zero for other values etc...
+        # 5. Assign the value
+        # 6. Draw the value
+        # 7. Move to next zero.
+        if self.board_loaded == True:
+            empty_squares = self.sudoku.find_empty(board)
+            if not empty_squares:
+                return True
+            else:
+                row, col = empty_squares
+            
+            for i in range(1, 10):
+                if self.sudoku.check_valid(board, i, (row, col)):
+                    board[row][col] = i
+                    x,y = self.__get_num_coords(row, col)
+                    self.canvas.create_text(
+                            x,y, text=i, tags=f"v_solve{row}{col}", fill="sea green" # Tag each generated solution
+                    )
+
+                    self.update()
+                    time.sleep(0.1)
+                    if self.__draw_solver(board): # Recursive function
+                        return True
+
+            
+                    board[row][col] = 0
+                    self.canvas.delete(f"v_solve{row}{col}") # Delete if backtracking
+                    x,y = self.__get_num_coords(row, col)
+                    self.update()
+                    time.sleep(0.25)
+
     
     def draw_command(self):
         # Call the draw_numbers function for the button
@@ -138,7 +189,7 @@ class SudokuUI(Frame):
     
     def draw_answers_command(self):
         # Call the draw_numbers function for answer button
-        self.__draw_solution()
+        self.__draw_solver(self.puzzle_board)
 
     def __clear_all(self):
         pass
