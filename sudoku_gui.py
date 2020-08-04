@@ -56,7 +56,7 @@ class SudokuUI(Frame):
         self.puzzle_board, self.solution = self.__get_board()
 
     def __get_board(self):
-        puzzle_board, solution = self.sudoku.gen_puzzle_board(level="medium")
+        puzzle_board, solution = self.sudoku.gen_puzzle_board(level="hard")
         return puzzle_board, solution
 
     def __draw_grid(self):
