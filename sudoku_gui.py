@@ -63,7 +63,13 @@ class SudokuUI(Frame):
         # Draw the initial grid
         # 9 x 9 with blue lines to divide the 3 x 3 squares
         for i in range(10):
-            colour = "blue" if i % 3 == 0 else "gray"
+            if i % 3 == 0:
+                colour = "blue"
+                width = 2
+            else:
+                colour = "gray"
+                width = 1
+            # colour = "blue" if i % 3 == 0 else "gray"
 
             # Vertical lines
             x0 = MARGIN + i * SIDE
@@ -71,7 +77,7 @@ class SudokuUI(Frame):
             x1 = MARGIN + i * SIDE
             y1 = HEIGHT - MARGIN
 
-            self.canvas.create_line(x0, y0, x1, y1, fill=colour)
+            self.canvas.create_line(x0, y0, x1, y1, fill=colour, width=width)
 
             # Horizontal lines
             x0 = MARGIN
@@ -79,7 +85,7 @@ class SudokuUI(Frame):
             x1 = WIDTH - MARGIN
             y0 = MARGIN + i * SIDE
 
-            self.canvas.create_line(x0, y0, x1, y1, fill=colour)
+            self.canvas.create_line(x0, y0, x1, y1, fill=colour, width=width)
 
     def __get_num_coords(self, i, j):
         # Get coordinates for text generation
