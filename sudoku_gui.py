@@ -177,7 +177,6 @@ class SudokuUI(Frame):
                     self.update()
                     time.sleep(0.1)
                     if self.__draw_solver(board): # Recursive function, ie the function calls itself
-                        back_count = 0
                         return True
 
             
