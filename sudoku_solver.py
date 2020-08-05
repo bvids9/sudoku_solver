@@ -9,67 +9,13 @@ class SudokuBoard():
         self.solved_board = []
         self.puzzle_board = [[0 for i in range(9)] for j in range(9)]
         self.solver_message = ""
-        
-    def fixed_indexes(self):
-        # generate three unique numbers to use as shuffling indexes
-        fixed_indexes = []
-        while len(fixed_indexes) < 3:
-            random_int = random.randrange(1, 9)
-            if random_int not in fixed_indexes: fixed_indexes.append(random_int)
-        # print(f"Fixed indexes: {fixed_indexes}")
-        return fixed_indexes
-    
-    def contains(self, list1, list2):
-        # function to cycle through lists and compare entries
-        # lists must be equal length
-        list1.sort()
-        list2.sort()
-        contains = False
-
-        for i in range(len(list1)):
-            if list1[i] in list2:
-                contains = True
-        return contains
-
-    def unique_lists(self, list1, list2):
-        while self.contains(list1, list2):  # While the lists contain values of each other
-            list1 = self.fixed_indexes()   # Change the first list until it isn't.
-        return list1, list2
-                
-    def shuffle_row(self, row):
-        # Function works as advertised, however the algorithm needs a rethink.
-
-        # Generate a pair of unique index lists
-        ind_a = self.fixed_indexes()
-        ind_b = self.fixed_indexes()
-
-        # Make sure they're unique
-        ind_a, ind_b = self.unique_lists(ind_a, ind_b)
-     
-        # print(f"Ind_a is: {ind_a}")
-        # print(f"Ind_b is: {ind_b}")
-
-        # Randomise a row using the initial input row
-        rand_r1 = row[:] # Reshuffled row   
-        rand_r2 = row[:] # Original row
-
-        # print(f"Randomised seed_row: {row}")
-
-        # Cycle through the given row at each index and swap it around.
-        for i in range(len(ind_a)):
-            rand_r1[ind_a[i]] = rand_r1[ind_b[i]] # Swap in the first row
-            rand_r1[ind_b[i]] = rand_r2[ind_a[i]] # Swap using the original as a reference (ie values have been changed)  
-        
-        # print(f"Reshuffled Row: {rand_r1}")
-
-        return rand_r1
                 
     def gen_board(self):
         # Generate a 9 x 9 board
         # Generates a randomised first line to be the seed_row
         # Then the remainder is zeroed
         # Boards are solved from this
-        seed_row_initial = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+        seed_row_initial = list(range(1,10))
         board = [[0 for i in range(9)] for j in range(9)]
         random.shuffle(seed_row_initial)
         board[0] = seed_row_initial
@@ -121,8 +67,7 @@ class SudokuBoard():
             if self.check_valid(board, i, (row, col)):
                 board[row][col] = i # Generate valid numbers and place in the empty squares
 
-                if self.solve_board(board):
-                    self.solved_board = board
+                if self.solve_board(board): # Recursive function to backtrack
                     return True # Check if the board has been solved after placing values
                     
 
@@ -183,14 +128,14 @@ class SudokuBoard():
         return self.solver_message
     
 # Test Code for this Class
-# sudoku = SudokuBoard()
+sudoku = SudokuBoard()
 
-# puzzle, solution = sudoku.gen_puzzle_board(level="hard")
+puzzle, solution = sudoku.gen_puzzle_board(level="hard")
 
-# print("\nOriginal Puzzle: \n")
-# sudoku.disp_board(solution)
+print("\nOriginal Puzzle: \n")
+sudoku.disp_board(solution)
 
-# print("\nPuzzle to be solved:\n")
-# sudoku.disp_board(puzzle)
+print("\nPuzzle to be solved:\n")
+sudoku.disp_board(puzzle)
 
 
