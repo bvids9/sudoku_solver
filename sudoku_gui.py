@@ -119,7 +119,6 @@ class SudokuUI(Frame):
         self.lbl_message_log['text'] = "Board Loaded!"
         self.board_loaded = True
 
-
     def __draw_solver(self, board):
 
         # Visualisation of the backtracking algorithm
@@ -183,6 +182,10 @@ class SudokuUI(Frame):
         # Call the draw_numbers function for the button
         self.__init_draw_numbers(difficulty="hard", original=True)
     
+    def draw_answers_command(self):
+        # Call the draw_numbers function for answer button
+        self.__draw_solver(self.puzzle_board)
+
     def get_selection_coords(self, row, col):
         
         x0 = MARGIN + col*SIDE
@@ -209,13 +212,10 @@ class SudokuUI(Frame):
         x,y, text=number,font=text_font, tags=f"v_solve{row}{col}", fill=colour, 
         )
     
-    def draw_answers_command(self):
-        # Call the draw_numbers function for answer button
-        self.__draw_solver(self.puzzle_board)
-
-    def __draw_solution(self):
-        # Generates an instant solution and can feed it in live
+    def disp_solution(self):
+        # Displays the solution instantly
         # Not a true backtracking or display of how the program works.
+        # Currently unused.
         if self.board_loaded:
             self.solving = True
             for i in range(9):
@@ -236,5 +236,5 @@ class SudokuUI(Frame):
 
 root = Tk()
 SudokuGame = SudokuUI(root)
-root.geometry(f"{WIDTH}x{HEIGHT+120}")
+root.geometry(f"{WIDTH}x{HEIGHT+80}")
 root.mainloop()
