@@ -165,7 +165,7 @@ class SudokuUI(Frame):
                 self.draw_selection(row, col)
                 self.lbl_message_log['text'] = "Guessing..."
                 self.update()
-                time.sleep(0.001)
+                time.sleep(0.05)
 
                 self.canvas.delete(f"v_solve{row}{col}", f"selection{row}{col}")
                 
@@ -214,7 +214,6 @@ class SudokuUI(Frame):
         # Draw red rectangle at currently analysed square
         x0, y0, x1, y1 =  self.get_selection_coords(row, col)
         self.canvas.create_rectangle(x0, y0, x1, y1, outline="red", tags=f"selection{row}{col}")
-        time.sleep(delay)
     
     def draw_confirmation(self, row, col):
         # When moving on from the selected square (ie found a correct number), turn rectangle green

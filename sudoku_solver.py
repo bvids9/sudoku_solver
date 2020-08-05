@@ -128,14 +128,14 @@ class SudokuBoard():
         return self.solver_message
     
 # Test Code for this Class
-sudoku = SudokuBoard()
+# sudoku = SudokuBoard()
 
-puzzle, solution = sudoku.gen_puzzle_board(level="hard")
+# puzzle, solution = sudoku.gen_puzzle_board(level="hard")
 
-print("\nOriginal Puzzle: \n")
-sudoku.disp_board(solution)
+# print("\nOriginal Puzzle: \n")
+# sudoku.disp_board(solution)
 
-print("\nPuzzle to be solved:\n")
-sudoku.disp_board(puzzle)
+# print("\nPuzzle to be solved:\n")
+# sudoku.disp_board(puzzle)
 
 
