@@ -300,6 +300,11 @@ class SudokuUI(Frame):
                         self.canvas.delete(f"selection{self.disp_row}{self.disp_col}")
                         self.disp_row, self.disp_col = -1, -1
                         self.lbl_message_log['text'] = (f"{self.user_answer} is correct!")
+                        time.sleep(delay)
+                        check_empty = self.sudoku.find_empty(self.puzzle_board)
+
+                        if not check_empty:
+                            self.lbl_message_log['text'] = (f"Solved!")
                     else:
                         self.lbl_message_log['text'] = (f"{self.user_answer} is incorrect. Try again.")
 
