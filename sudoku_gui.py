@@ -1,4 +1,4 @@
-from tkinter import Tk, Canvas, Frame, Button, BOTH, TOP, BOTTOM, Label, font, Message
+from tkinter import Tk, Canvas, Frame, Button, BOTH, TOP, BOTTOM, Label, font, Message, Toplevel
 import time
 from sudoku_solver import SudokuBoard
 
@@ -14,7 +14,7 @@ class SudokuUI(Frame):
         self.sudoku = SudokuBoard()
 
         # UI Code
-        Frame.__init__(self, parent, borderwidth=1, relief="ridge")
+        Frame.__init__(self, parent)
         self.parent = parent
         self.disp_row, self.disp_col = -1, -1
 
@@ -23,6 +23,8 @@ class SudokuUI(Frame):
         self.solved = False
         self.message_log = ""
         self.user_answer = ""
+        self.difficulty = "hard"
+        self.set_difficulty = False
 
         self.__generate_interface()
 
@@ -109,7 +111,7 @@ class SudokuUI(Frame):
             self.delete_v_solve()
 
             # Loads new board
-            self.puzzle_board, self.solution = self.__get_board(difficulty)
+            self.puzzle_board, self.solution = self.__get_board(self.difficulty)
 
             # Print board to GUI
             for i in range(9):
@@ -191,7 +193,36 @@ class SudokuUI(Frame):
 
     def draw_command(self):
         # Call the draw_numbers function for the button
-        self.__init_draw_numbers(difficulty="hard", original=True)
+        if self.set_difficulty:
+            self.__init_draw_numbers(difficulty=self.difficulty, original=True)
+            self.set_difficulty = False
+        else:
+            self.lbl_message_log['text'] = "Select a puzzle difficulty first."
+            self.difficulty_window()
+
+    def difficulty_window(self):
+        options = Toplevel()
+        options.title("Difficulty Setting")
+        message = "Choose your puzzle difficulty"
+        Label(options, text=message).pack()
+
+        Button(options, 
+                text="Easy - Solve for 25 Numbers", 
+                command=lambda:[self.choose_puzzle("easy"), options.destroy(), self.draw_command()]).pack()
+
+        Button(options, text="Medium - Solve for 45 Numbers",
+                command=lambda:[self.choose_puzzle("medium"), options.destroy(), self.draw_command()]).pack()
+
+        Button(options, text="Hard - Solve for 64 Numbers", 
+                command=lambda:[self.choose_puzzle("hard"), options.destroy(), self.draw_command()]).pack()
+
+
+    def choose_puzzle(self, level):
+        self.difficulty = level
+        self.set_difficulty = True
+        difficulty_message = str(self.difficulty).title()
+        self.lbl_message_log['text'] = f"{difficulty_message} puzzle selected."
+
     
     def draw_answers_command(self):
         # Call the draw_numbers function for answer button
