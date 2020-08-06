@@ -124,8 +124,8 @@ class SudokuUI(Frame):
                         )
                         self.update()   #Tkinter.update function to refresh screen
                         time.sleep(delay)
-                        self.lbl_message_log['text'] = "Loading..."
-        self.lbl_message_log['text'] = "Board Loaded!"
+                        self.lbl_message_log['text'] = f"Loading {str(self.difficulty).title()} Board..."
+        self.lbl_message_log['text'] = f"{str(self.difficulty).title()} Board Loaded!"
         self.board_loaded = True
         self.solved = False
 
@@ -220,8 +220,6 @@ class SudokuUI(Frame):
     def choose_puzzle(self, level):
         self.difficulty = level
         self.set_difficulty = True
-        difficulty_message = str(self.difficulty).title()
-        self.lbl_message_log['text'] = f"{difficulty_message} puzzle selected."
 
     
     def draw_answers_command(self):
