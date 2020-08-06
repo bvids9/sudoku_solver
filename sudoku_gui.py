@@ -15,13 +15,15 @@ class SudokuUI(Frame):
         self.sudoku = SudokuBoard()
 
         # UI Code
-        Frame.__init__(self, parent)
+        Frame.__init__(self, parent, borderwidth=1, relief="ridge")
         self.parent = parent
         self.disp_row, self.disp_col = -1, -1
 
         self.board_loaded = False
         self.solving = False
+        self.solved = False
         self.message_log = ""
+        self.user_answer = ""
 
         self.__generate_interface()
 
@@ -36,7 +38,8 @@ class SudokuUI(Frame):
         self.grid(row=0, column=0)
         self.canvas = Canvas(self,
                             width=WIDTH,
-                            height=HEIGHT)
+                            height=HEIGHT
+                            )
         self.canvas.grid(row=0, column=0)
 
         draw_button = Button(self, 
@@ -54,6 +57,10 @@ class SudokuUI(Frame):
         self.lbl_message_log.grid(row=3, column=0, sticky="ew")
 
         self.__draw_grid()
+
+        # Bind functions
+        self.canvas.bind("<Button-1>", self.__click_square)
+        self.canvas.bind("<Key>", self.__key_press)
 
     def __get_board(self, level):
         puzzle_board, solution = self.sudoku.gen_puzzle_board(level=level)
@@ -118,16 +125,21 @@ class SudokuUI(Frame):
                         self.lbl_message_log['text'] = "Loading..."
         self.lbl_message_log['text'] = "Board Loaded!"
         self.board_loaded = True
+        self.solved = False
+
 
     def __draw_solver(self, board):
 
         # Visualisation of the backtracking algorithm
         # A repeat of the sudoku_solver.py function, but broken down to allow visualising
 
-        if self.board_loaded == True:
+        if not self.solved and self.board_loaded:   # Make sure there is a board loaded AND it hasn't been solved
+            self.solving = True
             empty_squares = self.sudoku.find_empty(board)
             if not empty_squares:
                 self.lbl_message_log['text'] = "Solved!"
+                self.solved = True
+                self.solving = False
                 return True
             else:
                 row, col = empty_squares
@@ -231,8 +243,64 @@ class SudokuUI(Frame):
 
         self.solving = False
         
-    def __user_inputs(self):
-        pass
+    def __click_square(self, event):
+        # Detect if a square has been clicked
+        # 0. Make sure the board hasn't been filled or solved
+        # 1. Make sure within boundaries
+        # 2. Get the coordinates square that is clicked
+        # 3. Setup the cursor and display (activate square), if not already selected and if not filled with base puzzle
+        # 4. Allow inputs etc etc or deselect if clicked again
+
+        if not self.solved and self.board_loaded:
+            mouse_x, mouse_y = event.x, event.y
+            #
+            if (MARGIN < mouse_x < WIDTH + MARGIN and MARGIN < mouse_y < HEIGHT + MARGIN):
+                self.canvas.focus_set()
+
+                row, col = int((mouse_y - MARGIN) / SIDE), int((mouse_x - MARGIN) / SIDE)
+                
+                # Check if clicking the same square, if yes, deselect it
+                if (row, col) == (self.disp_row, self.disp_col):
+                    self.canvas.delete(f"selection{row}{col}", f"v_solve{row}{col}")
+                    self.disp_row, self.disp_col = -1, -1
+
+
+                # Check if the square already has values in it and we haven't selected anywhere else
+                elif (self.puzzle_board[row][col] == 0 and (self.disp_row, self.disp_col) == (-1, -1)):
+                    print(f"x,y coords are {row, col}\n mouse_x, mouse_y is {mouse_x, mouse_y}")
+                    self.disp_selection(row, col)
+                    self.disp_row, self.disp_col = row, col
+                    # Allow inputs
+
+    def __key_press(self, event):
+        # Make sure not solving, a board is loaded and board is not solved
+        if not self.solved and not self.solving and self.board_loaded:
+            # Check to make sure that the entered value is valid
+            # Draw and update the numbers, grey for placeholder
+            solution = self.sudoku.get_solved_board()
+            x, y = self.__get_num_coords(self.disp_row, self.disp_col)
+            
+            # Make sure something is selected
+            if (self.disp_row >= 0 and self.disp_col >= 0):
+                # Get the number input
+                if event.char in "123456789":
+                    self.user_answer = int(event.char)
+                    self.canvas.delete(f"v_solve{self.disp_row}{self.disp_col}") # Clear out the previous answer
+                    self.disp_solv_num(self.user_answer, x, y, self.disp_row, self.disp_col, colour="grey")
+                    
+                    # Only allow correct numbers
+                    if solution[self.disp_row][self.disp_col] == self.user_answer:
+                        self.puzzle_board[self.disp_row][self.disp_col] = self.user_answer
+
+                        self.disp_solv_num(self.user_answer, x, y, self.disp_row, self.disp_col, colour="black")
+                        self.canvas.delete(f"selection{self.disp_row}{self.disp_col}")
+                        self.disp_row, self.disp_col = -1, -1
+                        self.lbl_message_log['text'] = (f"{self.user_answer} is correct!")
+                    else:
+                        self.lbl_message_log['text'] = (f"{self.user_answer} is incorrect. Try again.")
+
+
+
 
 root = Tk()
 SudokuGame = SudokuUI(root)
