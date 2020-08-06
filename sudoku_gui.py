@@ -270,7 +270,7 @@ class SudokuUI(Frame):
 
                 # Check if the square already has values in it and we haven't selected anywhere else
                 elif (self.puzzle_board[row][col] == 0 and (self.disp_row, self.disp_col) == (-1, -1)):
-                    print(f"x,y coords are {row, col}\n mouse_x, mouse_y is {mouse_x, mouse_y}")
+                    # print(f"x,y coords are {row, col}\n mouse_x, mouse_y is {mouse_x, mouse_y}")
                     self.disp_selection(row, col)
                     self.lbl_message_log['text'] = ("Square selected. Enter a number...")
                     self.disp_row, self.disp_col = row, col
