@@ -106,6 +106,7 @@ class SudokuUI(Frame):
             # Load numbers into the board
             self.canvas.delete("numbers")
             self.canvas.delete("solution")
+            self.disp_row, self.disp_col = -1, -1
             self.delete_v_solve()
 
             # Loads new board
@@ -126,7 +127,6 @@ class SudokuUI(Frame):
         self.lbl_message_log['text'] = "Board Loaded!"
         self.board_loaded = True
         self.solved = False
-
 
     def __draw_solver(self, board):
 
@@ -196,6 +196,9 @@ class SudokuUI(Frame):
     
     def draw_answers_command(self):
         # Call the draw_numbers function for answer button
+        # Wipe previous selection and any pending answers that are incorrect (ie last guess)
+        self.canvas.delete(f"selection{self.disp_row}{self.disp_col}", f"v_solve{self.disp_row}{self.disp_col}")
+        self.disp_row, self.disp_col = -1, -1   # Reset selection flags
         self.__draw_solver(self.puzzle_board)
 
     def get_selection_coords(self, row, col):
@@ -251,7 +254,7 @@ class SudokuUI(Frame):
         # 3. Setup the cursor and display (activate square), if not already selected and if not filled with base puzzle
         # 4. Allow inputs etc etc or deselect if clicked again
 
-        if not self.solved and self.board_loaded:
+        if not self.solved and not self.solving and self.board_loaded:
             mouse_x, mouse_y = event.x, event.y
             #
             if (MARGIN < mouse_x < WIDTH + MARGIN and MARGIN < mouse_y < HEIGHT + MARGIN):
@@ -269,6 +272,7 @@ class SudokuUI(Frame):
                 elif (self.puzzle_board[row][col] == 0 and (self.disp_row, self.disp_col) == (-1, -1)):
                     print(f"x,y coords are {row, col}\n mouse_x, mouse_y is {mouse_x, mouse_y}")
                     self.disp_selection(row, col)
+                    self.lbl_message_log['text'] = ("Square selected. Enter a number...")
                     self.disp_row, self.disp_col = row, col
                     # Allow inputs
 
