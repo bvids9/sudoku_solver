@@ -1,5 +1,4 @@
 from tkinter import Tk, Canvas, Frame, Button, BOTH, TOP, BOTTOM, Label, font, Message
-import tkinter as tk
 import time
 from sudoku_solver import SudokuBoard
 
