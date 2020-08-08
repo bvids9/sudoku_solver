@@ -7,6 +7,8 @@ SIDE = 50   # Cell side length
 WIDTH = HEIGHT = MARGIN * 2 + SIDE * 9  # Size of Grid
 delay = 0.1 # Time delay in seconds
 
+
+
 class SudokuUI(Frame):
     def __init__(self, parent):
 
@@ -201,8 +203,16 @@ class SudokuUI(Frame):
             self.difficulty_window()
 
     def difficulty_window(self):
+        # Messagebox for selecting the difficulty
         options = Toplevel()
         options.title("Difficulty Setting")
+        win_x = self.winfo_rootx()
+        win_y = self.winfo_rooty()
+
+        x = int((win_x/2) + (WIDTH/2))+200
+        y = int((win_y/2) + (HEIGHT/2))
+
+        options.geometry("300x100+{}+{}".format(x, y))
         message = "Choose your puzzle difficulty"
         Label(options, text=message).pack()
 
@@ -216,12 +226,10 @@ class SudokuUI(Frame):
         Button(options, text="Hard - Solve for 64 Numbers", 
                 command=lambda:[self.choose_puzzle("hard"), options.destroy(), self.draw_command()]).pack()
 
-
     def choose_puzzle(self, level):
         self.difficulty = level
         self.set_difficulty = True
 
-    
     def draw_answers_command(self):
         # Call the draw_numbers function for answer button
         # Wipe previous selection and any pending answers that are incorrect (ie last guess)
@@ -340,6 +348,14 @@ class SudokuUI(Frame):
 
 
 root = Tk()
+
+# Centre in screen
+screen_width = root.winfo_screenwidth()
+screen_height = root.winfo_screenheight()
+
+root_x = (screen_width/2) - (WIDTH/2)
+root_y = (screen_height/2) - (HEIGHT/2)
+
 SudokuGame = SudokuUI(root)
-root.geometry(f"{WIDTH}x{HEIGHT+80}")
+root.geometry(f"{WIDTH}x{HEIGHT+80}+{int(root_x)}+{int(root_y)}")
 root.mainloop()
