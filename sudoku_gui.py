@@ -195,12 +195,13 @@ class SudokuUI(Frame):
 
     def draw_command(self):
         # Call the draw_numbers function for the button
-        if self.set_difficulty:
-            self.__init_draw_numbers(difficulty=self.difficulty, original=True)
-            self.set_difficulty = False
-        else:
-            self.lbl_message_log['text'] = "Select a puzzle difficulty first."
-            self.difficulty_window()
+        if not self.solving:
+            if self.set_difficulty:
+                self.__init_draw_numbers(difficulty=self.difficulty, original=True)
+                self.set_difficulty = False
+            else:
+                self.lbl_message_log['text'] = "Select a puzzle difficulty first."
+                self.difficulty_window()
 
     def difficulty_window(self):
         # Messagebox for selecting the difficulty
@@ -227,6 +228,7 @@ class SudokuUI(Frame):
                 command=lambda:[self.choose_puzzle("hard"), options.destroy(), self.draw_command()]).pack()
 
     def choose_puzzle(self, level):
+        # Assign difficulty level at button press in the messagebox
         self.difficulty = level
         self.set_difficulty = True
 
