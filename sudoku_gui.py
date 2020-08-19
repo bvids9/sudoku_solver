@@ -30,8 +30,6 @@ class SudokuUI(Frame):
 
         self.__generate_interface()
 
-        pass
-
     def __generate_interface(self):
         # Generate Tkinter window
         # Generate interface elements, including buttons
