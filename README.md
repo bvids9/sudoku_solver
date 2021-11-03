@@ -9,4 +9,4 @@ Sudoku_gui generates a GUI using Tkinter that imports boards generated in Sudoku
 
 Users can attempt to solve the GUI puzzle by clicking and entering numbers between 1 and 9. Correct values are automatically locked in and coloured green.
 
-Alternatively, the board can demonstrate backtracking and solve the puzzle.
+Alternatively, the board can demonstrate backtracking and solve the puzzle. The 'backtracking' compares the guess values to the already known solved value - used to simulate the program solving itself.
