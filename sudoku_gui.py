@@ -63,7 +63,7 @@ class SudokuUI(Frame):
         self.canvas.bind("<Button-1>", self.__click_square)
         self.canvas.bind("<Key>", self.__key_press)
 
-    def __get_board(self, level):
+    def get_board(self, level):
         puzzle_board, solution = self.sudoku.gen_puzzle_board(level=level)
         return puzzle_board, solution
 
@@ -111,7 +111,7 @@ class SudokuUI(Frame):
             self.delete_v_solve()
 
             # Loads new board
-            self.puzzle_board, self.solution = self.__get_board(self.difficulty)
+            self.puzzle_board, self.solution = self.get_board(self.difficulty)
 
             # Print board to GUI
             for i in range(9):
