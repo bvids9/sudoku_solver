@@ -28,13 +28,13 @@ class SudokuUI(Frame):
         self.difficulty = "hard"
         self.set_difficulty = False
 
-        self.__generate_interface()
+        self.generate_interface()
 
-    def __generate_interface(self):
+    def generate_interface(self):
         # Generate Tkinter window
         # Generate interface elements, including buttons
 
-        self.parent.title("Sudoku Solver")
+        self.parent.title("Sudoku Solver - Brent Vidler")
         self.parent.resizable(width=False, height=False)
         self.grid(row=0, column=0)
         self.canvas = Canvas(self,
@@ -57,7 +57,7 @@ class SudokuUI(Frame):
         self.lbl_message_log = Message(self, fg="black", bg="gray82", bd=3, width=400)
         self.lbl_message_log.grid(row=3, column=0, sticky="ew")
 
-        self.__draw_grid()
+        self.draw_grid()
 
         # Bind functions
         self.canvas.bind("<Button-1>", self.__click_square)
@@ -67,7 +67,7 @@ class SudokuUI(Frame):
         puzzle_board, solution = self.sudoku.gen_puzzle_board(level=level)
         return puzzle_board, solution
 
-    def __draw_grid(self):
+    def draw_grid(self):
         # Draw the initial grid
         # 9 x 9 with blue lines to divide the 3 x 3 squares
         for i in range(10):
@@ -94,7 +94,7 @@ class SudokuUI(Frame):
 
             self.canvas.create_line(x0, y0, x1, y1, fill=colour, width=width)
 
-    def __get_num_coords(self, i, j):
+    def get_coords(self, i, j):
         # Get coordinates for text generation
         # Returns middle of cells
         x = MARGIN + j * SIDE + SIDE/2
@@ -102,7 +102,7 @@ class SudokuUI(Frame):
 
         return (x,y)
 
-    def __init_draw_numbers(self, difficulty, original=False, answers=False, visual_solve=False):
+    def draw_numbers(self, difficulty, original=False, answers=False, visual_solve=False):
         if not self.solving:
             # Load numbers into the board
             self.canvas.delete("numbers")
@@ -118,7 +118,7 @@ class SudokuUI(Frame):
                 for j in range(9):
                     answer = self.puzzle_board[i][j]
                     if answer != 0:
-                        x, y = self.__get_num_coords(i,j)
+                        x, y = self.get_coords(i,j)
                         self.canvas.create_text(
                             x,y, text=answer, tags="numbers", fill="black"
                         )
@@ -148,7 +148,7 @@ class SudokuUI(Frame):
             for i in range(1, 10):
                 # Select the square and display the cycling of solutions
                 # Then delete immediately after, if a valid guess is found, the solution code block will enter it.
-                x,y = self.__get_num_coords(row, col)
+                x,y = self.get_coords(row, col)
 
                 self.disp_solv_num(i, x,y, row, col, "black")
                 self.disp_selection(row, col)
@@ -160,7 +160,7 @@ class SudokuUI(Frame):
                 
                 if self.sudoku.check_valid(board, i, (row, col)):
                     # Get square coordinates and draw the selection to indicate solving
-                    x,y = self.__get_num_coords(row, col)
+                    x,y = self.get_coords(row, col)
                     self.disp_selection(row, col)
                     self.update()
 
@@ -195,7 +195,7 @@ class SudokuUI(Frame):
         # Call the draw_numbers function for the button
         if not self.solving:
             if self.set_difficulty:
-                self.__init_draw_numbers(difficulty=self.difficulty, original=True)
+                self.draw_numbers(difficulty=self.difficulty, original=True)
                 self.set_difficulty = False
             else:
                 self.lbl_message_log['text'] = "Select a puzzle difficulty first."
@@ -273,7 +273,7 @@ class SudokuUI(Frame):
                 for j in range(9):
                     answer = self.solution[i][j]
                     if self.puzzle_board[i][j] == 0:
-                        x, y = self.__get_num_coords(i,j)
+                        x, y = self.get_coords(i,j)
                         self.canvas.create_text(
                             x,y, text=answer, tags="solution", fill="sea green"
                         )
@@ -318,7 +318,7 @@ class SudokuUI(Frame):
             # Check to make sure that the entered value is valid
             # Draw and update the numbers, grey for placeholder
             solution = self.sudoku.get_solved_board()
-            x, y = self.__get_num_coords(self.disp_row, self.disp_col)
+            x, y = self.get_coords(self.disp_row, self.disp_col)
             
             # Make sure something is selected
             if (self.disp_row >= 0 and self.disp_col >= 0):
